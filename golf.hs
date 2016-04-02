@@ -15,11 +15,12 @@ localMaxima (x:y:z:r)
 localMaxima _ = []
 
 histogram :: [Integer] -> String
-histogram xs = unlines ((
-            transpose
-            $ map (reverse . \x -> concat $ replicate x "*" ++ replicate (9-x) " ")
-            $ foldr (\x acc -> length ( filter (==x) xs ) : acc) [] [0..9] )
-            ++ ["==========", "0123456789"])
+histogram xs = unlines $ transpose bars ++ ["==========", "0123456789"]
+  where
+    nums = foldr (\x acc -> length ( filter (==x) xs ) : acc) [] [0..9]
+    longest = maximum nums
+    bars = map (reverse . \x -> concat $ replicate x "*" ++ replicate (longest-x) " ") nums
+
 
 
 a :: [Integer]
