@@ -3,8 +3,6 @@ import Data.List
 import Data.List.Split.Internals
 import Safe
 
-
-
 skips :: [a] -> [[a]]
 skips xs = map (lastDef [] . transpose. flip chunksOf xs) [1..length xs]
 
@@ -15,13 +13,9 @@ localMaxima (x:y:z:r)
 localMaxima _ = []
 
 histogram :: [Integer] -> String
-histogram xs = unlines $ transpose bars ++ ["==========", "0123456789"]
+histogram xs = unlines $ transpose ( map (\x -> concat $ replicate (maximum nums-x) " " ++ replicate x "*" ++ ["="]) nums ) ++ ["0123456789"]
   where
-    nums = foldr (\x acc -> length ( filter (==x) xs ) : acc) [] [0..9]
-    longest = maximum nums
-    bars = map (reverse . \x -> concat $ replicate x "*" ++ replicate (longest-x) " ") nums
-
-
+    nums = map (\x -> length $ filter (==x) xs ) [0..9]
 
 a :: [Integer]
 a = [1,4,5,4,6,6,3,4,2,4,9]
