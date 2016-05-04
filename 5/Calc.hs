@@ -26,9 +26,9 @@ class Expr a where
   mul :: a -> a -> a
 
 instance Expr ExprT where
-  lit x = Lit x
-  add x y = Add x y
-  mul x y = Mul x y
+  lit = Lit
+  add = Add
+  mul = Mul
 
 --Exercise 4
 
@@ -48,12 +48,12 @@ instance Expr Bool where
   mul x y = x && y
 
 instance Expr MinMax where
-  lit x = MinMax x
+  lit = MinMax
   add (MinMax x) (MinMax y) = MinMax (max x y)
   mul (MinMax x) (MinMax y) = MinMax (min x y)
 
 instance Expr Mod7 where
-  lit x = Mod7 x
+  lit = Mod7
   add (Mod7 x) (Mod7 y) = Mod7 (mod (x + y) 7)
   mul (Mod7 x) (Mod7 y) = Mod7 (mod (x * y) 7)
 
@@ -87,20 +87,20 @@ data VarExprT = VarLit Integer
   deriving (Show, Eq)
 
 instance Expr VarExprT where
-  lit x = VarLit x
-  add x y = VarAdd x y
-  mul x y = VarMul x y
+  lit = VarLit
+  add = VarAdd
+  mul = VarMul
 
 instance HasVars VarExprT where
-  var x = VarVar x
+  var = VarVar
 
 instance HasVars (M.Map String Integer -> Maybe Integer) where
-  var x = \m -> M.lookup x m
+  var = M.lookup
 
 instance Expr (M.Map String Integer -> Maybe Integer) where
-  lit x = \m -> Just x
-  add x y = \m -> (+) <$> x m <*> y m
-  mul x y = \m -> (*) <$> x m <*> y m
+  lit x m= Just x
+  add x y m = (+) <$> x m <*> y m
+  mul x y m = (*) <$> x m <*> y m
 
 withVars :: [(String, Integer)]
          -> (M.Map String Integer -> Maybe Integer)
