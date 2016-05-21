@@ -1,3 +1,5 @@
+module HW6 where
+
 fib :: Integer -> Integer
 fib 0 = 0
 fib 1 = 1
@@ -25,10 +27,21 @@ streamMap :: ( a -> b ) -> Stream a -> Stream b
 streamMap f (Elem x y) = Elem (f x) (streamMap f y)
 
 streamFromSeed :: (a -> a) -> a -> Stream a
-streamFromSeed f x = Elem x (streamFromSeed f x)
-
-nats :: Stream Integer
-nats = streamFromSeed (+1) 0
+streamFromSeed f x = Elem x (streamFromSeed f (f x))
 
 interleavesStreams :: Stream a -> Stream a -> Stream a
-interleavesStreams =
+interleavesStreams (Elem a b) (Elem x y) = Elem a (Elem x (interleavesStreams b y))
+
+-- naive implementation
+nats :: Stream Integer
+nats = streamMap hi2  $ streamFromSeed (+1) 1
+  where hi2 x = last $ filter (\y -> x `mod` 2^y == 0) $ takeWhile (\y -> 2^y <= x) [0,1..]
+
+twoFacs :: Integer -> Integer
+twoFacs x = f x 0
+  where f x y | even x = f (x`div`2) (y+1)
+              | otherwise = y
+
+nats' :: Stream Integer
+nats' = streamMap twoFacs $ streamFromSeed (+1) 1
+
